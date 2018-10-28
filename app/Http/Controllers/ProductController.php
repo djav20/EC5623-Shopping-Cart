@@ -20,19 +20,31 @@ class ProductController extends Controller
 
     public function getAddToCart(Request $request, $id){
         $product = Product::find($id);
-        $oldCart = Session::has('cart') ? Session::get('cart') : null;
-        $cart = new Cart($oldCart);
-        $cart->add($product, $product->id);
 
-        $request->session()->put('cart', $cart);
-        //dd($request->session()->get('cart'));
-        return redirect()->route('product.index');
+        // Chequeamos si esta disponible
+        if($product->stock > 0){
+            // Reducir en una unidad el stock
+            $product->restoreStock($id, -1);
+
+            $oldCart = Session::has('cart') ? Session::get('cart') : null;
+            $cart = new Cart($oldCart);
+            $cart->add($product, $product->id);
+    
+            $request->session()->put('cart', $cart);
+            return redirect()->route('product.index')->with('success', 'Product added to your cart');
+            
+        } else {
+            return redirect()->route('product.index')->with('error', 'Product out of stock');
+        }
     }
 
     public function getReduceByOne($id){
         $oldCart = Session::has('cart') ? Session::get('cart') : null;
         $cart = new Cart($oldCart);
         $cart->reduceByOne($id);
+
+        $product = Product::find($id);
+        $product->restoreStock($id, 1);
 
         if(count($cart->items) > 0){
             Session::put('cart', $cart);
@@ -46,6 +58,12 @@ class ProductController extends Controller
     public function getRemoveItem($id){
         $oldCart = Session::has('cart') ? Session::get('cart') : null;
         $cart = new Cart($oldCart);
+
+        // Colocar antes de $cart->removeItem($id); ya que borra dicho $id
+        $product = Product::find($id);
+        $qty = $cart->items[$id]['qty'];
+        $product->restoreStock($id, $qty);
+
         $cart->removeItem($id);
 
         if(count($cart->items) > 0){

@@ -2,8 +2,12 @@
         style="background-color: #e3f2fd;">
 
   <a    class="navbar-brand" 
-        href="{{ route('product.index') }}">
-        Brand</a>
+        href="{{ route('product.index') }}"
+        style="color: Red; font-size: 24px">
+
+        <i class="fab fa-medrt fa-lg" style="color:Red;"></i>
+        Med Online
+  </a>
 
   <button   class="navbar-toggler" 
             type="button" 
@@ -23,9 +27,10 @@
 
       <li class="nav-item">
         <a  class="nav-link" 
-            href="{{ route('product.shoppingCart') }}">
-
-            <i class="fas fa-cart-plus"></i>
+            href="{{ route('product.shoppingCart') }}"
+            style="font-size: 16px">
+            
+            <i class="fas fa-cart-plus fa-lg"></i>
             Shopping Cart
 
             <span class="badge">
@@ -41,9 +46,14 @@
             role="button" 
             data-toggle="dropdown" 
             aria-haspopup="true" 
-            aria-expanded="false">
+            aria-expanded="false"
+            style="font-size: 16px">
 
-            <i class="far fa-user"></i>
+            @if(Auth::guest())
+            <i class="far fa-user fa-lg"></i>
+            @else
+            <i class="fas fa-user fa-lg"></i>
+            @endif
             
             User Management
         </a>

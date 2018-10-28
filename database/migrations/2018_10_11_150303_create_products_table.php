@@ -18,6 +18,7 @@ class CreateProductsTable extends Migration
             $table->timestamps();
             $table->string('imagePath');
             $table->string('title');
+            $table->integer('stock');
             $table->text('description');
             $table->float('price');
         });
